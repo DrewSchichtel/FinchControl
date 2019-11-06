@@ -10,7 +10,7 @@ namespace FinchControl
     // Description:
     // Author: Drew Schichtel
     // Dated Created: 9/30/2019
-    // Last Modified: 11/04/2019
+    // Last Modified: 11/06/2019
     // **************************************************
 
     class Program
@@ -94,6 +94,7 @@ namespace FinchControl
             finchRobot.wait(500);
             finchRobot.setMotors(-255, -50);
             finchRobot.wait(500);
+            RobotStopAll(finchRobot);
 
             Console.WriteLine();
             do
@@ -347,7 +348,7 @@ namespace FinchControl
                         else DisplayConnectionIssueInformation();
                         break;
                     case "e":
-                        if (finchRobotConnected) DataRecorder(finchRobot);
+                        if (finchRobotConnected) UserProgramming(finchRobot);
                         else DisplayConnectionIssueInformation();
                         break;
                     case "f":
@@ -357,6 +358,7 @@ namespace FinchControl
                         ThemeConfig();
                         break;
                     case "q":
+                        finchRobot.disConnect();
                         quitApplication = true;
                         break;
                     default:
@@ -485,7 +487,6 @@ namespace FinchControl
         #endregion
 
         #region UserProgrammingHelpers
-
 
         /// <summary>
         /// Get command parameters from user
@@ -1253,6 +1254,9 @@ namespace FinchControl
 
         #region HELPER METHODS
 
+        /// <summary>
+        /// allows user to set theme
+        /// </summary>
         static void ThemeConfig()
         {
             string dataPath = @"Data\Theme.txt";
@@ -1299,11 +1303,17 @@ namespace FinchControl
 
             } while (!colorValid);
 
+
+            SetTheme();
+            Console.Clear();           
             Console.WriteLine("Theme has been set.");
             DisplayContinuePrompt();
 
         }
 
+        /// <summary>
+        /// sets theme from data file
+        /// </summary>
         static void SetTheme()
         {
             string dataPath = @"Data\Theme.txt";
