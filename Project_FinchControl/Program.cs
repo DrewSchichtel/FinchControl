@@ -324,6 +324,7 @@ namespace FinchControl
                 Console.WriteLine("d) Alarm System");
                 Console.WriteLine("e) User Programming");
                 Console.WriteLine("f) Disconnect Finch Robot");
+                Console.WriteLine("g) Set Theme");
                 Console.WriteLine("q) Quit");
                 Console.Write("Enter Choice:");
                 menuChoice = Console.ReadLine().ToLower();
@@ -351,6 +352,9 @@ namespace FinchControl
                         break;
                     case "f":
                         DisplayDisconnectFinchRobot(finchRobot);
+                        break;
+                    case "g":
+                        ThemeConfig();
                         break;
                     case "q":
                         quitApplication = true;
@@ -1249,17 +1253,75 @@ namespace FinchControl
 
         #region HELPER METHODS
 
+        static void ThemeConfig()
+        {
+            string dataPath = @"Data\Theme.txt";
+            string foregroundColorString;
+            string backgroundColorString;
+            bool colorValid;
+            ConsoleColor foregroundColor;
+            ConsoleColor backgroundColor;
+
+            DisplayScreenHeader("Theme Selection");
+            Console.WriteLine();
+            do
+            {
+                Console.WriteLine("Please enter desired foreground color:");
+                foregroundColorString = Console.ReadLine();
+                colorValid = Enum.TryParse(foregroundColorString, out foregroundColor);
+                if (colorValid)
+                {
+                    File.WriteAllText(dataPath, foregroundColorString);
+                }
+                else
+                {
+                    Console.WriteLine($"{foregroundColorString} is not a valid color");
+                }
+
+            } while (!colorValid);
+
+            colorValid = false;
+            File.AppendAllText(dataPath, ",");
+
+            do
+            {
+                Console.WriteLine("Please enter desired background color:");
+                backgroundColorString = Console.ReadLine();
+                colorValid = Enum.TryParse(backgroundColorString, out backgroundColor);
+                if (colorValid)
+                {
+                    File.AppendAllText(dataPath, backgroundColorString);
+                }
+                else
+                {
+                    Console.WriteLine($"{foregroundColorString} is not a valid color");
+                }
+
+            } while (!colorValid);
+
+            Console.WriteLine("Theme has been set.");
+            DisplayContinuePrompt();
+
+        }
+
         static void SetTheme()
         {
             string dataPath = @"Data\Theme.txt";
             string foregroundColorString;
+            string backgroundColorString;
             ConsoleColor foreground;
+            ConsoleColor background;
+            string theme;
+            string[] themeArray;
 
-            foregroundColorString = File.ReadAllText(dataPath);
-
+            theme = File.ReadAllText(dataPath);
+            themeArray = theme.Split(',');
+            foregroundColorString = themeArray[0];
+            backgroundColorString = themeArray[1];
             Enum.TryParse(foregroundColorString, out foreground);
-
+            Enum.TryParse(backgroundColorString, out background);
             Console.ForegroundColor = foreground;
+            Console.BackgroundColor = background;
 
         }
 
